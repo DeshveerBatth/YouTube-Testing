@@ -1,0 +1,227 @@
+package org.example;
+
+import net.bytebuddy.build.Plugin;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.Test;
+import java.time.Duration;
+
+public class YouTubeTest {
+
+    WebDriver driver = new ChromeDriver();
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    WebDriverWait wait;
+
+    @Test(priority = 1)
+    public void setUp() {
+        driver.get("https://www.youtube.com");
+        driver.manage().window().maximize();
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    }
+
+//    @BeforeMethod
+//    public void setUp() {
+//        // Set up ChromeDriver and open YouTube
+//        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+//        driver = new ChromeDriver();
+//        driver.get("https://www.youtube.com");
+//        driver.manage().window().maximize();
+//    }
+
+    @Test(priority = 2)
+    public void testLoginFunctionality() throws InterruptedException {
+
+        WebElement signInButton = driver.findElement(By.xpath("(//div[@class='yt-spec-touch-feedback-shape__fill'])[4]"));
+        signInButton.click();
+
+        WebElement emailInput = driver.findElement(By.id("identifierId"));
+        emailInput.sendKeys("Your_gmailID");
+
+        WebElement nextButton = driver.findElement(By.xpath("(//span[normalize-space()='Next'])[1]"));
+        nextButton.click();
+
+        Thread.sleep(5000);
+
+        WebElement passwordInput = driver.findElement(By.xpath("(//input[@name='Passwd'])[1]"));
+        passwordInput.sendKeys("Your_Password");
+
+        WebElement loginButton = driver.findElement(By.xpath("(//span[normalize-space()='Next'])[1]"));
+        loginButton.click();
+
+        Thread.sleep(5000);
+
+        WebElement profileIcon = driver.findElement(By.xpath("//img[@alt='Avatar image']"));
+        System.out.println("Login Sucessfull");
+        assert profileIcon.isDisplayed() : "Login failed!";
+    }
+
+    @Test(priority = 3)
+    public void testSearchVideoFunctionality() throws InterruptedException {
+        WebElement searchBox = driver.findElement(By.xpath("(//input[@id='search'])[1]"));
+        searchBox.sendKeys("Selenium WebDriver Tutorial");
+
+        WebElement searchButton = driver.findElement(By.id("search-icon-legacy"));
+        searchButton.click();
+
+        Thread.sleep(5000);
+
+        WebElement firstVideoTitle = driver.findElement(By.xpath("(//span[@id='video-title'])[1]"));
+        System.out.println("Video title displayed");
+        assert firstVideoTitle.isDisplayed() : "Search results not displayed!";
+    }
+
+
+    @Test(priority = 4)
+    public void testVideoPlaybackFunctionality() throws InterruptedException {
+        WebElement firstVideo = driver.findElement(By.xpath("(//a[@id='video-title'])[1]"));
+        firstVideo.click();
+
+        Thread.sleep(5000);
+
+        WebElement likeButton = (WebElement) js.executeScript(
+                "return document.querySelector('button[aria-label=\"Like this video\"]');"
+        );
+        System.out.println("Video is being played");
+    }
+
+
+    @Test(priority = 5)
+    public void testLikeVideoFunctionality() throws InterruptedException {
+        WebElement likeButton = (WebElement) js.executeScript(
+                "return document.querySelector('button[aria-label=\"Like this video\"]');"
+        );
+        System.out.println("Like fuctionality working");
+
+//        // Add some wait time for the action to complete
+//        Thread.sleep(2000);
+    }
+
+    @Test(priority = 6)
+    public void testScrollToCommentAndVerify() throws InterruptedException {
+        WebElement commentSection = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ytd-comments")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", commentSection);
+        System.out.println("Testing comment box functionality");
+
+        WebElement commentBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='placeholder-area']")));
+        System.out.println("Comment box is visible!");
+
+        Thread.sleep(5000);
+
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
+        System.out.println("Scrolled back to the top of the page.");
+    }
+
+
+
+    @Test(priority = 7)
+    public void testOpenChannelAndInteract() throws InterruptedException {
+        driver.get("https://www.youtube.com/@SimplilearnOfficial");
+
+        WebElement channelBanner = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//div[@class='page-header-view-model-wiz__page-header-headline-info'])[1]")));
+        System.out.println("Channel page loaded!");
+
+        Thread.sleep(2000);
+
+        WebElement videosTab = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//div[@class='yt-tab-shape-wiz__tab'][normalize-space()='Videos'])[1]")));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", videosTab);
+        videosTab.click();
+        System.out.println("Interacted with the 'Videos' tab!");
+
+        Thread.sleep(2000);
+
+        WebElement aboutTab = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("(//div[@class='yt-tab-shape-wiz__tab yt-tab-shape-wiz__tab--tab-selected'])[1]")));
+        aboutTab.click();
+        System.out.println("Interacted with the 'About' section!");
+
+        Thread.sleep(3000);
+    }
+
+
+//    @Test(priority = 7)
+//    public void testUploadVideoFunctionality() throws InterruptedException {
+//        driver.findElement(By.xpath("(//div)[107]")).click();
+//
+//        WebElement createButton = driver.findElement(By.xpath("(//div)[143]"));
+//        createButton.click();
+//
+//        driver.findElement(By.xpath("(//yt-formatted-string[@id='label'])[1]")).click();
+//
+//        Thread.sleep(3000);
+//
+//        driver.findElement(By.xpath("(//div[@class='yt-spec-touch-feedback-shape__fill'])[11]")).click();
+//
+//        System.out.println("Simulating video upload...");
+//
+//        Thread.sleep(5000);
+//
+//        WebElement uploadSuccessMessage = driver.findElement(By.xpath("//yt-formatted-string[contains(text(),'Upload complete')]"));
+//        assert uploadSuccessMessage.isDisplayed() : "Video upload failed!";
+//    }
+
+
+    // Add the eighth test case here: testAddVideoToPlaylistFunctionality
+//    @Test(priority = 8)
+//    public void testAddVideoToPlaylistFunctionality() throws InterruptedException {
+//        Thread.sleep(5000);
+//
+//        driver.findElement(By.cssSelector("div[class='yt-spec-touch-feedback-shape yt-spec-touch-feedback-shape--down yt-spec-touch-feedback-shape--touch-response'] div[class='yt-spec-touch-feedback-shape__fill']")).click();
+//
+//        WebElement saveButton = driver.findElement(By.cssSelector("ytd-menu-service-item-renderer:nth-child(3) tp-yt-paper-item:nth-child(1)"));
+//        saveButton.click();
+//
+//        Thread.sleep(3000);
+//
+//        WebElement watchLater = driver.findElement(By.xpath("(//div[@id='checkboxContainer'])[1]"));
+//        watchLater.click();
+//
+//        driver.findElement(By.xpath("(//div)[5617]")).click();
+//
+//    }
+//
+//    @Test(priority = 9)
+//    public void testShareVideoFunctionality() throws InterruptedException {
+//        WebElement shareButton = driver.findElement(By.cssSelector("div[class='yt-spec-touch-feedback-shape yt-spec-touch-feedback-shape--down yt-spec-touch-feedback-shape--touch-response'] div[class='yt-spec-touch-feedback-shape__fill']"));
+//        shareButton.click();
+//
+//        Thread.sleep(3000);
+//
+//        WebElement copyLink = driver.findElement(By.xpath("(//div[@class='yt-spec-touch-feedback-shape__fill'])[196]"));
+//        copyLink.click();
+//
+//        driver.findElement(By.xpath("(//div)[5686]")).click();
+//
+//        WebElement linkCopiedConfirmation = driver.findElement(By.xpath("//yt-formatted-string[text()='Link copied to clipboard']"));
+//        assert linkCopiedConfirmation.isDisplayed() : "Share link failed!";
+//    }
+
+
+    @Test(priority = 8)
+    public void testLogoutFunctionality() throws InterruptedException {
+        WebElement profileIcon = driver.findElement(By.xpath("(//img[@id='img'])[1]"));
+        profileIcon.click();
+
+        Thread.sleep(3000);
+
+        WebElement signOutButton = driver.findElement(By.xpath("(//tp-yt-paper-item[@role='none'])[3]"));
+        signOutButton.click();
+
+        Thread.sleep(5000);
+
+        WebElement signInButton = driver.findElement(By.xpath("(//div[@id='text-container'])[1]"));
+        assert signInButton.isDisplayed() : "Logout failed!";
+        System.out.println("Successfully logged out");
+
+    }
+
+    @Test(priority = 9)
+    public void teardown(){
+        System.out.println("Quitting the browser");
+        driver.quit();
+    }
+
+}
