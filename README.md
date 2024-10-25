@@ -46,6 +46,13 @@ This project includes several test cases written using **TestNG** to automate ac
 9. **Test Share Video Functionality**  
    Shares a video by copying the link and verifies the success message. *(Includes dynamic elements)*
 
+## Technologies Used
+
+- **Languages**: Java
+- **Frameworks**: TestNG
+- **Tools**: Selenium WebDriver, ChromeDriver, Maven
+- **Libraries**: `JavascriptExecutor`, `WebDriverWait`
+
 ## Installation and Setup
 
 1. Clone this repository:
